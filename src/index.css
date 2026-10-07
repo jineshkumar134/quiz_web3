@@ -1,0 +1,243 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Design tokens
+
+   Colour policy: every hue encodes something — subject identity, difficulty,
+   score band, or system status. Nothing is coloured for decoration alone.
+   --------------------------------------------------------------------------- */
+@theme {
+  /* Surfaces — canvas is the page, surface is a panel, raised is a hovered row */
+  --color-canvas: #08090a;
+  --color-surface: #101113;
+  --color-raised: #16171a;
+  --color-overlay: #1a1b1f;
+
+  /* Hairlines */
+  --color-line: #212226;
+  --color-line-strong: #2c2e33;
+
+  /* Text ramp */
+  --color-fg: #ededef;
+  --color-fg-muted: #8a8f98;
+  --color-fg-subtle: #5c6169;
+
+  /* Primary accent */
+  --color-accent: #6366f1;
+  --color-accent-hover: #7679f5;
+  --color-accent-fg: #a5b0ff;
+  --color-accent-line: #3b3f8f;
+
+  /* Status */
+  --color-ok: #3fb950;
+  --color-ok-line: #1d3d24;
+  --color-warn: #d29922;
+  --color-warn-line: #3d3117;
+  --color-bad: #f85149;
+  --color-bad-line: #45201f;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+
+  /* Motion */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    letter-spacing: -0.006em;
+  }
+
+  /* Tailwind v4 resets borders to `0 solid`, leaving border-color at
+     currentColor. Any element that sets a width but forgets a colour would
+     otherwise draw a bright border on this dark theme. Pin a sane default. */
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-line);
+  }
+
+  /* Numbers should never reflow as they tick */
+  [data-numeric] {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, var(--color-accent) 40%, transparent);
+    color: var(--color-fg);
+  }
+
+  ::placeholder {
+    color: var(--color-fg-subtle);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line-strong) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-line-strong);
+    border-radius: 8px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-fg-subtle);
+    background-clip: content-box;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Motion
+   --------------------------------------------------------------------------- */
+@layer utilities {
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes rise-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes rise-in-lg {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes slide-in-left {
+    from { opacity: 0; transform: translateX(-8px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes pop-in {
+    from { opacity: 0; transform: scale(0.97); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes sheet-in {
+    from { opacity: 0; transform: translateY(10px) scale(0.985); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes indeterminate {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(400%); }
+  }
+
+  @keyframes shimmer {
+    from { background-position: -200% 0; }
+    to { background-position: 200% 0; }
+  }
+
+  /* Confirmation nudge when an answer is graded */
+  @keyframes nudge {
+    0% { transform: scale(1); }
+    45% { transform: scale(1.015); }
+    100% { transform: scale(1); }
+  }
+
+  /* Expanding halo behind a live indicator */
+  @keyframes halo {
+    0% { transform: scale(1); opacity: 0.5; }
+    70% { transform: scale(2.2); opacity: 0; }
+    100% { transform: scale(2.2); opacity: 0; }
+  }
+
+  @keyframes sweep {
+    from { background-position: 0% 50%; }
+    to { background-position: 200% 50%; }
+  }
+
+  .animate-fade-in { animation: fade-in 0.2s var(--ease-out-quart) both; }
+  .animate-rise-in { animation: rise-in 0.22s var(--ease-out-quart) both; }
+  .animate-rise-in-lg { animation: rise-in-lg 0.34s var(--ease-out-quart) both; }
+  .animate-slide-in-left { animation: slide-in-left 0.24s var(--ease-out-quart) both; }
+  .animate-pop-in { animation: pop-in 0.18s var(--ease-spring) both; }
+  .animate-sheet-in { animation: sheet-in 0.24s var(--ease-spring) both; }
+  .animate-indeterminate { animation: indeterminate 1.1s ease-in-out infinite; }
+  .animate-nudge { animation: nudge 0.32s var(--ease-out-quart); }
+  .animate-halo { animation: halo 2s ease-out infinite; }
+
+  /* Loading placeholder */
+  .skeleton {
+    background-image: linear-gradient(
+      90deg,
+      var(--color-raised) 0%,
+      var(--color-line-strong) 50%,
+      var(--color-raised) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+
+  /* Slow colour sweep for the sign-in hero rule */
+  .animate-sweep {
+    background-size: 200% 100%;
+    animation: sweep 7s linear infinite;
+  }
+
+  /* Stagger helper: set --i on each child to cascade its entrance. */
+  .stagger > * {
+    animation: rise-in 0.3s var(--ease-out-quart) both;
+    animation-delay: calc(var(--i, 0) * 40ms);
+  }
+
+  /* Flashcard 3D flip */
+  .perspective { perspective: 1400px; }
+  .preserve-3d { transform-style: preserve-3d; }
+  .backface-hidden {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .flip-y { transform: rotateY(180deg); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in,
+    .animate-rise-in,
+    .animate-rise-in-lg,
+    .animate-slide-in-left,
+    .animate-pop-in,
+    .animate-sheet-in,
+    .animate-indeterminate,
+    .animate-nudge,
+    .animate-halo,
+    .animate-sweep,
+    .skeleton,
+    .stagger > * {
+      animation: none !important;
+    }
+    * {
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
